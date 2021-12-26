@@ -8,26 +8,16 @@ namespace BluetoothSimulator
 {
     class Program
     {
-        private static bool running = true;
+        public static bool running = true;
         static void Main(string[] args)
         {
+            Console.WriteLine("Welcome to Bluetooth Simulator Program!");
+            ConsoleHandler.printBTLogo();
+            Console.Write("Press any key to start...");
+            Console.ReadKey();
             while (running == true)
             {
-                Console.WriteLine("Welcome to Bluetooth Simulator Program!");
-                Console.ForegroundColor = ConsoleColor.Blue;
-                ConsoleHandler.printBTLogo();
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write("Press any key to start...");
-                string k = Console.ReadLine();
-                switch (k)
-                {
-                    case "exit":
-                        running = false;
-                        break;
-                    case "1":
-                        //
-                        break;
-                }
+                ConsoleHandler.printMainMenu();
             }
         }
     }

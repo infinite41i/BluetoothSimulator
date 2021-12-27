@@ -44,14 +44,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\BluetoothNetwork.cs" />
-    <Compile Include="Classes\BTConsts.cs" />
+    <Compile Include="Classes\Consts\BTConsts.cs" />
     <Compile Include="Classes\Channel.cs" />
     <Compile Include="Classes\ConsoleHandler.cs" />
     <Compile Include="Classes\FHSS.cs" />
     <Compile Include="Classes\Node.cs" />
-    <Compile Include="Classes\NodeMode.cs" />
+    <Compile Include="Classes\enums\NodeMode.cs" />
     <Compile Include="Classes\Packet.cs" />
+    <Compile Include="Classes\enums\PacketTypes.cs" />
     <Compile Include="Classes\Piconet.cs" />
+    <Compile Include="Classes\FrequencyChannel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

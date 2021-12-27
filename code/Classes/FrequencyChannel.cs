@@ -9,8 +9,9 @@ using BluetoothSimulator.Classes.Consts;
 
 namespace BluetoothSimulator.Classes
 {
-    class Channel
+    class FrequencyChannel
     {
-
+        private Packet packet;
+        private byte[] delivered = new byte[7];
     }
 }

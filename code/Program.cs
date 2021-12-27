@@ -9,6 +9,7 @@ namespace BluetoothSimulator
     class Program
     {
         public static bool running = true;
+        public static BluetoothNetwork bluetoothNetwork = new BluetoothNetwork();
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to Bluetooth Simulator Program!");

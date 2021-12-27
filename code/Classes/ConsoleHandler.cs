@@ -49,7 +49,7 @@ namespace BluetoothSimulator
             switch (k)
             {
                 case "1":
-                    //
+                    initNodeDialog();
                     break;
                 case "2":
                     //
@@ -62,20 +62,42 @@ namespace BluetoothSimulator
                     break;
             }
         }
+
+        public static void initNodeDialog()
+        {
+            Console.Clear();
+            Console.Write("Enter new node name: ");
+            string name = Console.ReadLine();
+            if(Program.bluetoothNetwork.newNode(name) == 1)
+            {
+                Console.WriteLine("Node created successfully");
+                Console.WriteLine("Node name: {0} , node id: {1}", Program.bluetoothNetwork.getLastNode().getName(), Program.bluetoothNetwork.getLastNode().getGUID());//complete here
+            } 
+            Console.Write("Press any key to return...");
+            Console.ReadKey();
+
+        }
         
         public static void printStatus()
         {
-            //Console.WriteLine("\t#\t|\tnode_name\t|\tnode_id\t|\tmaster/slave\t|\t");
-            //if (Program.nodes != null && Program.nodes.Length != 0)
-            //{
-            //    foreach (Node node in Program.nodes)
-            //    {
-            //        //
-            //    }
-            //} else
-            //{
-            //    Console.WriteLine("\t-\t|\t----------\t|\t-------\t|\t-------------\t|\t");
-            //}
+            Console.WriteLine("\t#\t|\tnode_name\t|\tnode_id\t|\tmaster/slave\t|\t");
+            if (Program.bluetoothNetwork.getNodes() != null && Program.bluetoothNetwork.getNodes().Length != 0)
+            {
+                Node[] nodes = Program.bluetoothNetwork.getNodes();
+                int counter = 0;
+                foreach (Node node in nodes)
+                {
+                    if(node != null)
+                    {
+                        counter++;
+                        Console.WriteLine("\t{0}\t|\t{1}\t|\t{2}\t|\t{3}\t|\t", counter, node.getName(), node.getGUID(), node.getMasterorSlave() ? "master" : "slave");
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("\t-\t|\t----------\t|\t-------\t|\t-------------\t|\t");
+            }
             Console.Write("Press any key to return...");
             Console.ReadKey();
         }

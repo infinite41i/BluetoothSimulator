@@ -20,6 +20,26 @@ namespace BluetoothSimulator
             mode = NodeMode.Standby;
         }
 
+        public int getGUID()
+        {
+            return BTGUID;
+        }
+
+        public string getName()
+        {
+            return BTname;
+        }
+
+        public bool getMasterorSlave()
+        {
+            return master;
+        }
+
+        public NodeMode getMode()
+        {
+            return mode;
+        }
+
         public void recievePacket()
         {
             //

@@ -8,6 +8,8 @@ namespace BluetoothSimulator.Classes.enums
 {
     enum PacketTypes
     {
-
+        Broadcast,
+        Unicast,
+        Beacon
     }
 }

@@ -13,7 +13,7 @@ namespace BluetoothSimulator.Classes
     {
         private int BTGUID;
         private string BTname;
-        private bool master = false;
+        private bool master = true;
         private NodeMode mode;
 
         public Node(string name)
@@ -41,6 +41,11 @@ namespace BluetoothSimulator.Classes
         public NodeMode getMode()
         {
             return mode;
+        }
+
+        public void connect(int target_id)
+        {
+            //Program.bluetoothNetwork
         }
 
         public void recievePacket()

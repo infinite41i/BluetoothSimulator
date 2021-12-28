@@ -13,8 +13,8 @@ namespace BluetoothSimulator.Classes
     {
         public Node[] nodes = new Node[7];
         private int id;
-        private int lastIndex = 0;
-        Channel channel = new Channel();
+        private int nodeCount = 0;
+        private Channel channel = new Channel();
 
         public Piconet(int id)
         {
@@ -28,8 +28,8 @@ namespace BluetoothSimulator.Classes
 
         public void newNode(string name)
         {
-            nodes[lastIndex] = new Node(name);
-            lastIndex++;
+            nodes[nodeCount] = new Node(name);
+            nodeCount++;
         }
 
         public Node[] getNodes()
@@ -37,9 +37,19 @@ namespace BluetoothSimulator.Classes
             return nodes;
         }
 
+        public int getNodeCount()
+        {
+            return nodeCount;
+        }
+
         public Node getLastNode()
         {
-            return nodes[lastIndex-1];
+            return nodes[nodeCount-1];
+        }
+
+        public void sendPacket(Packet packet)
+        {
+            //
         }
     }
 }

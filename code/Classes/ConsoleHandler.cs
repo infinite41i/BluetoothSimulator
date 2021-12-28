@@ -55,7 +55,7 @@ namespace BluetoothSimulator.Classes
                     initNodeDialog();
                     break;
                 case "2":
-                    //
+                    selectNodeDialog();
                     break;
                 case "3":
                     printStatus();
@@ -66,6 +66,7 @@ namespace BluetoothSimulator.Classes
             }
         }
 
+        //option 1
         public static void initNodeDialog()
         {
             Console.Clear();
@@ -80,11 +81,129 @@ namespace BluetoothSimulator.Classes
             Console.ReadKey();
 
         }
+
+        //option 2
+        public static void selectNodeDialog()
+        {
+            if (Program.bluetoothNetwork.getNodeCount() != 0)
+            {
+                Node[] nodes = Program.bluetoothNetwork.getNodes();
+                int counter = 0;
+                foreach (Node node in nodes)
+                {
+                    if (node != null)
+                    {
+                        counter++;
+                        Console.WriteLine("{0}: {1} - {2}", counter, node.getName(), node.getGUID());
+                    }
+                }
+                Console.Write("Choose one of the above nodes: ");
+                int k = int.Parse(Console.ReadLine());
+                if(k>0 && k<=counter)
+                    Program.bluetoothNetwork.setSelectedNode(nodes[counter - 1]);
+                else
+                {
+                    Console.WriteLine("Selected node does not exist!");
+                    Console.Write("Press any key to return...");
+                    Console.ReadKey();
+                }
+                while (Program.bluetoothNetwork.getSelectedNode() != null)
+                {
+                    selectedNodeOptionsDialog();
+                }
+                
+            }
+            else
+            {
+                Console.WriteLine("No node exists!");
+                Console.Write("Press any key to return...");
+                Console.ReadKey();
+            }
+        }
+
+        //print what can be done with the selected node
+        public static void selectedNodeOptionsDialog()
+        {
+            Console.Clear();
+            Console.WriteLine("Selected node: {0}", Program.bluetoothNetwork.getSelectedNode().getName());
+            Console.WriteLine("\tChoose one of the options below:");
+            Console.WriteLine("\t 1. scan and connect");
+            Console.WriteLine("\t 2. send a message");
+            Console.WriteLine("\t 3. disconnect");
+            Console.WriteLine("\t 4. unselect node");
+            string k = Console.ReadLine();
+            switch (k)
+            {
+                case "1":
+                    scan();
+                    break;
+                case "2":
+                    //
+                    break;
+                case "3":
+                    //
+                    break;
+                case "4":
+                    Program.bluetoothNetwork.setSelectedNode(null);
+                    break;
+            }
+
+            //Console.WriteLine("Press any key to continue...");
+            //Console.ReadKey();
+        }
+
+        //scan
+        public static void scan()
+        {
+            //print near networks (every node in the same piconet is considered near.)
+            Node[] nodes = Program.bluetoothNetwork.getNodes();
+            int counter = 0;
+            foreach (Node node in nodes)
+            {
+                if (node != null)
+                {
+                    counter++;
+                    if (Program.bluetoothNetwork.getSelectedNode().getGUID() != nodes[counter - 1].getGUID())
+                        Console.WriteLine("{0}: {1} - {2}", counter, node.getName(), node.getGUID());
+                }
+            }
+            Console.Write("Choose one of the above nodes: ");
+            int k;
+            try
+            {
+                k = int.Parse(Console.ReadLine());
+            }
+            catch
+            {
+                k = -1;
+            }
+            if (k > 0 && k <= counter)
+            {
+                if(Program.bluetoothNetwork.getSelectedNode().getGUID() == nodes[k - 1].getGUID())
+                {
+                    Console.WriteLine("Can't connect to self.");
+                }
+                //connect to node[counter - 1]
+            }
+            else
+            {
+                Console.WriteLine("Selection not valid!");
+            }
+            Console.Write("Press any key to return...");
+            Console.ReadKey();    
+        }
+
+        //connect to selected target
+        public static void connect(int target_id)
+        {
+            //Program.bluetoothNetwork.getSelectedNode().
+        }
         
+        //option 3
         public static void printStatus()
         {
             Console.WriteLine("\t#\t|\tnode_name\t|\tnode_id\t|\tmaster/slave\t|\t");
-            if (Program.bluetoothNetwork.getNodes() != null && Program.bluetoothNetwork.getNodes().Length != 0)
+            if (Program.bluetoothNetwork.getNodeCount() != 0)
             {
                 Node[] nodes = Program.bluetoothNetwork.getNodes();
                 int counter = 0;

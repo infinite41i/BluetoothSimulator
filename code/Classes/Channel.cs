@@ -11,6 +11,11 @@ namespace BluetoothSimulator.Classes
 {
     class Channel
     {
+        private FrequencyChannel[] channels = new FrequencyChannel[BTConsts.channelCount];
 
+        //public void sendPacket(Packet packet)
+        //{
+        //    //
+        //}
     }
 }

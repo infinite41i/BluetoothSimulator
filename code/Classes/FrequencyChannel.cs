@@ -13,5 +13,10 @@ namespace BluetoothSimulator.Classes
     {
         private Packet packet;
         private byte[] delivered = new byte[7];
+
+        public FrequencyChannel(Packet packet)
+        {
+            this.packet = packet;
+        }
     }
 }

@@ -9,47 +9,103 @@ using BluetoothSimulator.Classes.Consts;
 
 namespace BluetoothSimulator.Classes
 {
-    class Piconet
+    public static partial class Piconet
     {
-        public Node[] nodes = new Node[7];
-        private int id;
-        private int nodeCount = 0;
-        private Channel channel = new Channel();
+        private static Node[] nodes = new Node[BTConsts.maxDevices];
+        private static int nodeCount = 0;
+        private static int selectedNode = -1;
 
-        public Piconet(int id)
+        public static int newNode(string name)
         {
-            this.id = id;
+            try
+            {
+                nodes[nodeCount] = new Node(name);
+                nodeCount++;
+                return nodes[nodeCount - 1].getGUID();
+            }
+            catch
+            {
+                Console.WriteLine("Error creating new node!");
+                return -1;
+            }
+            
         }
 
-        public int getID()
+        private static Node getNodeByID(int node_id)
         {
-            return id;
+            foreach (Node node in nodes)
+            {
+                if (node.getGUID() == node_id)
+                {
+                    return node;
+                }
+            }
+            return null;
         }
 
-        public void newNode(string name)
+        public static string getNameByID(int node_id)
         {
-            nodes[nodeCount] = new Node(name);
-            nodeCount++;
+            foreach(Node node in nodes)
+            {
+                if(node.getGUID() == node_id)
+                {
+                    return node.getName();
+                }
+            }
+            return null;
         }
 
-        public Node[] getNodes()
-        {
-            return nodes;
-        }
-
-        public int getNodeCount()
+        public static int getNodeCount()
         {
             return nodeCount;
         }
 
-        public Node getLastNode()
+        public static int[] getNodeIDs()
         {
-            return nodes[nodeCount-1];
+            int[] IDs = new int[BTConsts.maxDevices];
+            int counter = 0;
+            foreach(Node node in nodes)
+            {
+                if(node != null)
+                {
+                    IDs[counter] = node.getGUID();
+                }
+                else
+                {
+                    IDs[counter] = -1;
+                }
+                counter++;
+            }
+            return IDs;
         }
 
-        public void sendPacket(Packet packet)
+        public static string[] getNodeNames()
         {
-            //
+            string[] names = new string[BTConsts.maxDevices];
+            int counter = 0;
+            foreach (Node node in nodes)
+            {
+                if (node != null)
+                {
+                    names[counter] = node.getName();
+                }
+                else
+                {
+                    names[counter] = null;
+                }
+                counter++;
+            }
+            return names;
         }
+
+        public static bool getMasterOrSlave(int node_id)
+        {
+            return getNodeByID(node_id).getMasterorSlave();
+        }
+
+        //public void sendPacket(Packet packet)
+        //{
+        //    //
+        //}
     }
 }

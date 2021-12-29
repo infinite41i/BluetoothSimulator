@@ -9,9 +9,9 @@ using BluetoothSimulator.Classes.Consts;
 
 namespace BluetoothSimulator.Classes
 {
-    class Channel
+    public static class Channel
     {
-        private FrequencyChannel[] channels = new FrequencyChannel[BTConsts.channelCount];
+        private static FrequencyChannel[] channels = new FrequencyChannel[BTConsts.channelCount];
 
         //public void sendPacket(Packet packet)
         //{

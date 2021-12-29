@@ -9,20 +9,30 @@ using BluetoothSimulator.Classes.Consts;
 
 namespace BluetoothSimulator
 {
-    class Program
+    public static class Program
     {
-        public static bool running = true;
-        public static BluetoothNetwork bluetoothNetwork = new BluetoothNetwork();
+        private static bool running = true;
+        private static Random random = new Random();
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to Bluetooth Simulator Program!");
-            ConsoleHandler.printBTLogo();
+            BTConsole.printBTLogo();
             Console.Write("Press any key to start...");
             Console.ReadKey();
             while (running == true)
             {
-                ConsoleHandler.printMainMenu();
+                BTConsole.printMainMenu();
             }
+        }
+
+        public static void stop()
+        {
+            running = false;
+        }
+
+        public static int getRandomNumber()
+        {
+            return random.Next();
         }
     }
 }

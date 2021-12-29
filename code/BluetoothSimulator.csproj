@@ -43,10 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\BluetoothNetwork.cs" />
     <Compile Include="Classes\Consts\BTConsts.cs" />
     <Compile Include="Classes\Channel.cs" />
-    <Compile Include="Classes\ConsoleHandler.cs" />
+    <Compile Include="Classes\BTConsole.cs" />
     <Compile Include="Classes\FHSS.cs" />
     <Compile Include="Classes\Node.cs" />
     <Compile Include="Classes\enums\NodeMode.cs" />

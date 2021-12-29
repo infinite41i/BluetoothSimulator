@@ -9,48 +9,52 @@ using BluetoothSimulator.Classes.Consts;
 
 namespace BluetoothSimulator.Classes
 {
-    class Node
+    partial class Piconet
     {
-        private int BTGUID;
-        private string BTname;
-        private bool master = true;
-        private NodeMode mode;
-
-        public Node(string name)
+        public class Node
         {
-            BTGUID = BluetoothNetwork.getRandomNumber();
-            BTname = name;
-            mode = NodeMode.Standby;
-        }
+            private int BTGUID;
+            private string BTname;
+            private bool master = true;
+            private NodeMode mode;
 
-        public int getGUID()
-        {
-            return BTGUID;
-        }
+            public Node(string name)
+            {
+                BTGUID = Program.getRandomNumber();
+                BTname = name;
+                mode = NodeMode.Standby;
+            }
 
-        public string getName()
-        {
-            return BTname;
-        }
+            public int getGUID()
+            {
+                return BTGUID;
+            }
 
-        public bool getMasterorSlave()
-        {
-            return master;
-        }
+            public string getName()
+            {
+                return BTname;
+            }
 
-        public NodeMode getMode()
-        {
-            return mode;
-        }
+            public bool getMasterorSlave()
+            {
+                return master;
+            }
 
-        public void connect(int target_id)
-        {
-            //Program.bluetoothNetwork
-        }
+            //public NodeMode getMode()
+            //{
+            //    return mode;
+            //}
 
-        public void recievePacket()
-        {
-            //
+            public void connect(int target_id)
+            {
+                //Program.bluetoothNetwork
+            }
+
+            public void recievePacket()
+            {
+                //
+            }
         }
     }
+    
 }

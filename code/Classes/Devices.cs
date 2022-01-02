@@ -9,7 +9,7 @@ using BluetoothSimulator.Classes.Consts;
 
 namespace BluetoothSimulator.Classes
 {
-    public static partial class Piconet
+    public static partial class Devices
     {
         private static Node[] nodes = new Node[BTConsts.maxDevices];
         private static int nodeCount = 0;
@@ -29,6 +29,16 @@ namespace BluetoothSimulator.Classes
                 return -1;
             }
             
+        }
+
+        public static int getSelectedNode()
+        {
+            return selectedNode;
+        }
+
+        public static void setSelectedNode(int selected_node_id)
+        {
+            selectedNode = selected_node_id;
         }
 
         private static Node getNodeByID(int node_id)
@@ -103,9 +113,31 @@ namespace BluetoothSimulator.Classes
             return getNodeByID(node_id).getMasterorSlave();
         }
 
-        //public void sendPacket(Packet packet)
-        //{
-        //    //
-        //}
+        public static void connect(int targetNodeID)
+        {
+            if(selectedNode == -1)
+            {
+                Console.WriteLine("Select a node first");
+                return;
+            }
+            Node starter_node = Devices.getNodeByID(selectedNode);
+            int connection_success = starter_node.connect(targetNodeID);
+            switch (connection_success)
+            {
+                case 1:
+                    Console.WriteLine("Connection Successful!");
+                    break;
+                case -1:
+                    Console.WriteLine("Error in creating piconet!");
+                    break;
+                case -2:
+                    Console.WriteLine("Error in connecting the node: node is in a network or a problem occured.");
+                    break;
+                case -3:
+                    Console.WriteLine("Selected node is in a network but is not a master.");
+                    break;
+            }
+            return;
+        }
     }
 }

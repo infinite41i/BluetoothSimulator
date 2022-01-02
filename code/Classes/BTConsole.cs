@@ -12,7 +12,6 @@ namespace BluetoothSimulator.Classes
 {
     public static class BTConsole
     {
-        private static int selectedNodeID = -1;
         public static void printBTLogo()
         {
             String line;
@@ -73,11 +72,11 @@ namespace BluetoothSimulator.Classes
             Console.Clear();
             Console.Write("Enter new node name: ");
             string name = Console.ReadLine();
-            int newNodeID = Piconet.newNode(name);
+            int newNodeID = Devices.newNode(name);
             if (newNodeID != -1)
             {
                 Console.WriteLine("\tNode created successfully");
-                Console.WriteLine("\tNode name: {0} , node id: {1}", Piconet.getNameByID(newNodeID), newNodeID);
+                Console.WriteLine("\tNode name: {0} , node id: {1}", Devices.getNameByID(newNodeID), newNodeID);
             } 
             Console.Write("Press any key to return...");
             Console.ReadKey();
@@ -87,8 +86,8 @@ namespace BluetoothSimulator.Classes
         //option 2
         private static void selectNodeDialog()
         {
-            selectedNodeID = promptNode();
-            while(selectedNodeID != -1)
+            Devices.setSelectedNode(promptNode());
+            while(Devices.getSelectedNode() != -1)
             {
                 selectedNodeOptionsDialog();
             }
@@ -98,7 +97,7 @@ namespace BluetoothSimulator.Classes
         private static void selectedNodeOptionsDialog()
         {
             Console.Clear();
-            Console.WriteLine("Selected node: {0} - ID: {1}" ,Piconet.getNameByID(selectedNodeID) , selectedNodeID);
+            Console.WriteLine("Selected node: {0} - ID: {1}" ,Devices.getNameByID(Devices.getSelectedNode()) , Devices.getSelectedNode());
             Console.WriteLine("\tChoose one of the options below:");
             Console.WriteLine("\t 1. scan and connect");
             Console.WriteLine("\t 2. send a message");
@@ -117,7 +116,7 @@ namespace BluetoothSimulator.Classes
                     //
                     break;
                 case "4":
-                    selectedNodeID = -1;
+                    Devices.setSelectedNode(-1);
                     break;
             }
         }
@@ -126,22 +125,24 @@ namespace BluetoothSimulator.Classes
         private static void scan()
         {
             //print near networks (every node in the same piconet is considered near.)
-            int targetNodeID = promptNode(selectedNodeID);
-            Console.WriteLine(Piconet.getNameByID(targetNodeID));
+            int targetNodeID = promptNode(Devices.getSelectedNode());
+            Console.WriteLine("Connecting to {0}", Devices.getNameByID(targetNodeID));
+            connect(targetNodeID);
+            Console.Write("Press any key to return...");
             Console.ReadKey();
         }
 
         //connect to selected target
         private static void connect(int targetID)
         {
-            //Program.bluetoothNetwork.getSelectedNode().
+            Devices.connect(targetID);
         }
 
         private static int promptNode(int excludeID = 0)
         {
-            int[] IDs = Piconet.getNodeIDs();
-            string[] names = Piconet.getNodeNames();
-            int nodeCount = Piconet.getNodeCount();
+            int[] IDs = Devices.getNodeIDs();
+            string[] names = Devices.getNodeNames();
+            int nodeCount = Devices.getNodeCount();
             int excludeIndex = -1;
             
             if(nodeCount > 0)
@@ -211,14 +212,14 @@ namespace BluetoothSimulator.Classes
         private static void printStatus()
         {
             Console.WriteLine("\t#\t|\tnode_name\t|\tnode_id\t|\tmaster/slave\t|\t");
-            int[] IDs = Piconet.getNodeIDs();
-            string[] names = Piconet.getNodeNames();
-            int nodeCount = Piconet.getNodeCount();
+            int[] IDs = Devices.getNodeIDs();
+            string[] names = Devices.getNodeNames();
+            int nodeCount = Devices.getNodeCount();
             if (nodeCount != 0)
             {
                 for(int counter = 0; counter < nodeCount; counter++)
                 {
-                    Console.WriteLine("\t{0}\t|\t{1}\t|\t{2}\t|\t{3}\t|\t", counter, names[counter], IDs[counter], Piconet.getMasterOrSlave(IDs[counter]) ? "master" : "slave");
+                    Console.WriteLine("\t{0}\t|\t{1}\t|\t{2}\t|\t{3}\t|\t", counter, names[counter], IDs[counter], Devices.getMasterOrSlave(IDs[counter]) ? "master" : "slave");
                 }
             }
             else

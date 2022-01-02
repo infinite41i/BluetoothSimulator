@@ -8,7 +8,8 @@ namespace BluetoothSimulator.Classes.Consts
 {
     public static class BTConsts
     {
-        public const int maxDevices = 7;
+        public const int maxDevices = 32;
+        public const int maxDevicesInPiconet = 7;
         public const int avgSpeed = 733;
         public const int bandwidthPerChannel = 1; // in Mhz
         public const int beamPower = 1; // in mW

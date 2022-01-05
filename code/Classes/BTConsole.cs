@@ -103,9 +103,9 @@ namespace BluetoothSimulator.Classes
             Console.WriteLine("\t 2. send a message");
             Console.WriteLine("\t 3. see sent messages log");
             Console.WriteLine("\t 4. see recieved messages log");
-            Console.WriteLine("\t 5. disconnect");
-            Console.WriteLine("\t 6. see piconet status");
-            Console.WriteLine("\t 7. unselect node");
+            //Console.WriteLine("\t 5. disconnect");
+            Console.WriteLine("\t 5. see piconet status");
+            Console.WriteLine("\t 6. unselect node");
             string k = Console.ReadLine();
             switch (k)
             {
@@ -129,15 +129,15 @@ namespace BluetoothSimulator.Classes
                     Console.Write("Press any key to continue...");
                     Console.ReadKey();
                     break;
+                //case "5":
+                //    //disconnect
+                //    break;
                 case "5":
-                    //disconnect
-                    break;
-                case "6":
                     printPiconetStatus();
                     Console.Write("Press any key to continue...");
                     Console.ReadKey();
                     break;
-                case "7":
+                case "6":
                     Devices.setSelectedNode(-1);
                     break;
             }

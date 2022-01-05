@@ -313,7 +313,7 @@ namespace BluetoothSimulator.Classes
             {
                 target_candidate = -1;
             }
-            if (target_candidate >= 0 && target_candidate < piconet_node_count)
+            if (target_candidate >= 0 && target_candidate < piconet_node_count-1)
             {
                 if (target_candidate < exclude_index)
                     return piconet_nodes[target_candidate];

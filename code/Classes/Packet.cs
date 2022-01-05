@@ -13,15 +13,28 @@ namespace BluetoothSimulator.Classes
     {
         private int sender_id;
         private int reciever_id;
-        private PacketTypes packetType;
         private string message;
 
-        public Packet(int sender_id, int reciever_id, PacketTypes packetType, string message)
+        public Packet(int sender_id, int reciever_id, string message)
         {
             this.sender_id = sender_id;
             this.reciever_id = reciever_id;
-            this.packetType = packetType;
             this.message = message;
+        }
+
+        public int getSenderID()
+        {
+            return sender_id;
+        }
+
+        public int getRecieverID()
+        {
+            return reciever_id;
+        }
+
+        public string getMessage()
+        {
+            return message;
         }
     }
 }

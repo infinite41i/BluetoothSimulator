@@ -31,7 +31,7 @@ namespace BluetoothSimulator.Classes
             
         }
 
-        public static int getSelectedNode()
+        public static int getSelectedNodeID()
         {
             return selectedNode;
         }
@@ -138,6 +138,32 @@ namespace BluetoothSimulator.Classes
                     break;
             }
             return;
+        }
+
+        public static int getPiconetID(int node_id)
+        {
+            return Devices.getNodeByID(node_id).getPiconetID();
+        }
+
+        public static int[] getPiconetNodesByNodeID(int nodeID)
+        {
+            return getNodeByID(nodeID).getPiconetNodes();
+        }
+
+        public static int getPiconetNodeCountByNodeID(int node_id)
+        {
+            return getNodeByID(node_id).getPiconetNodeCount();
+        }
+
+        public static int getMasterID(int node_id)
+        {
+            return getNodeByID(node_id).getMasterID();
+        }
+
+        public static int sendPacket(int sender_id, int reciever_id, string message)
+        {
+            Node sender = Devices.getNodeByID(sender_id);
+            return sender.sendPacket(sender_id, reciever_id, message);
         }
     }
 }

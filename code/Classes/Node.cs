@@ -21,7 +21,8 @@ namespace BluetoothSimulator.Classes
             private int[] piconet_nodes = new int[BTConsts.maxDevicesInPiconet];
             private int piconet_node_index = 0; //node index and node count
             private int master_id = -1;
-            private Packet[] log = new Packet[10];//keep 10 last packets
+            private Queue<Packet> sendLog = new Queue<Packet>(BTConsts.logCapacity);//keep 10 last packets
+            private Queue<Packet> recieveLog = new Queue<Packet>(BTConsts.logCapacity);//keep 10 last packets
 
             public Node(string name)
             {
@@ -48,6 +49,33 @@ namespace BluetoothSimulator.Classes
             public int getPiconetID()
             {
                 return piconet_id;
+            }
+
+            public int[] getPiconetNodes()
+            {
+                if (master)
+                    return piconet_nodes;
+                else if (master_id != -1)
+                {
+                    int master_id = Devices.getMasterID(BTGUID);
+                    Node master_node = Devices.getNodeByID(master_id);
+                    return master_node.getPiconetNodes();
+                }
+                else
+                    return null;
+            }
+
+            public int getPiconetNodeCount()
+            {
+                if (master)
+                    return piconet_node_index;
+                else if (master_id != -1)
+                {
+                    int master_id = Devices.getMasterID(BTGUID);
+                    Node master_node = Devices.getNodeByID(master_id);
+                    return master_node.piconet_node_index;
+                }
+                else return 0;
             }
 
             public int connect(int target_id)
@@ -111,6 +139,38 @@ namespace BluetoothSimulator.Classes
                 {
                     return -1; //node is in a network or a problem occured
                 }
+            }
+
+            public int getMasterID()
+            {
+                return master_id;
+            }
+
+            public int sendPacket(int sender_id, int reciever_id, string message)
+            {
+                Packet packet = new Packet(sender_id, reciever_id, message);
+                Node reciever = Devices.getNodeByID(reciever_id);
+                int reciever_piconet = Devices.getNodeByID(packet.getRecieverID()).piconet_id;
+                if (piconet_id == -1)
+                {
+                    return -1;//device is not in any piconet
+                }
+                else if (reciever_piconet == piconet_id) //two devices are in same piconet
+                {
+                    sendLog.Enqueue(packet);
+                    reciever.recieveLog.Enqueue(packet);
+                    return 0;
+                }
+                else if (reciever_piconet == -1)
+                {
+                    return -2;//second node is not in a piconet
+                }
+                else
+                {
+                    return -3;//second node is not in the same piconet with first node
+                }
+                
+
             }
 
         }

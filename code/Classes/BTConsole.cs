@@ -87,7 +87,7 @@ namespace BluetoothSimulator.Classes
         private static void selectNodeDialog()
         {
             Devices.setSelectedNode(promptNode());
-            while(Devices.getSelectedNode() != -1)
+            while(Devices.getSelectedNodeID() != -1)
             {
                 selectedNodeOptionsDialog();
             }
@@ -97,12 +97,13 @@ namespace BluetoothSimulator.Classes
         private static void selectedNodeOptionsDialog()
         {
             Console.Clear();
-            Console.WriteLine("Selected node: {0} - ID: {1}" ,Devices.getNameByID(Devices.getSelectedNode()) , Devices.getSelectedNode());
+            Console.WriteLine("Selected node: {0} - ID: {1}" ,Devices.getNameByID(Devices.getSelectedNodeID()) , Devices.getSelectedNodeID());
             Console.WriteLine("\tChoose one of the options below:");
             Console.WriteLine("\t 1. scan and connect");
             Console.WriteLine("\t 2. send a message");
             Console.WriteLine("\t 3. disconnect");
-            Console.WriteLine("\t 4. unselect node");
+            Console.WriteLine("\t 4. see piconet status");
+            Console.WriteLine("\t 5. unselect node");
             string k = Console.ReadLine();
             switch (k)
             {
@@ -110,22 +111,28 @@ namespace BluetoothSimulator.Classes
                     scan();
                     break;
                 case "2":
-                    //
+                    sendMessageDialog();
                     break;
                 case "3":
                     //
                     break;
                 case "4":
+                    printPiconetStatus();
+                    Console.Write("Press any key to continue...");
+                    Console.ReadKey();
+                    break;
+                case "5":
                     Devices.setSelectedNode(-1);
                     break;
             }
         }
 
         //scan
+
         private static void scan()
         {
             //print near networks (every node in the same piconet is considered near.)
-            int targetNodeID = promptNode(Devices.getSelectedNode());
+            int targetNodeID = promptNode(Devices.getSelectedNodeID());
             Console.WriteLine("Connecting to {0}", Devices.getNameByID(targetNodeID));
             connect(targetNodeID);
             Console.Write("Press any key to return...");
@@ -208,10 +215,111 @@ namespace BluetoothSimulator.Classes
 
         }
         
+        private static void sendMessageDialog()
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            printPiconetStatus();
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Select one of the above nodes: ");
+            Console.ReadKey();
+        }
+
+        private static int sendMessage(int target_node, string message)
+        {
+            //first choose reciever
+            int reciever_id = promptNodeInPiconet(Devices.getSelectedNodeID());
+            if(reciever_id != -1)
+            {
+                return -1;
+            }
+            else
+            {
+                return Devices.sendPacket(Devices.getSelectedNodeID(), target_node, message);
+            }
+        }
+
+        private static void printPiconetStatus()
+        {
+            int selected_node_id = Devices.getSelectedNodeID();
+            int piconet_id = Devices.getPiconetID(selected_node_id);
+            Console.WriteLine("Piconet ID: {0}", piconet_id);
+            Console.WriteLine("\t#\t|\tname\t|\tnode id\t|\tmaster");
+            int piconet_node_count = Devices.getPiconetNodeCountByNodeID(selected_node_id);
+            int[] piconet_nodes = Devices.getPiconetNodesByNodeID(selected_node_id);
+            for(int node_index = 0; node_index<piconet_node_count; node_index++)
+            {
+                int node_id = piconet_nodes[node_index];
+                string node_name = Devices.getNameByID(node_id);
+                bool node_is_master = Devices.getMasterOrSlave(node_id);
+                Console.WriteLine("\t{0}\t|\t{1}\t|\t{2}\t|\t{3}", node_index, node_name, node_id, node_is_master ? "*" : " ");
+            }
+        }
+
+        private static int promptNodeInPiconet(int node_id)
+        {
+            int[] piconet_nodes = Devices.getPiconetNodesByNodeID(node_id);
+            int piconet_node_count = Devices.getPiconetNodeCountByNodeID(node_id);
+            int exclude_index = -1;
+
+            if(piconet_node_count > 0)
+            {
+                //print nodes list in piconet
+                Console.WriteLine("List of available nodes in piconet:");
+                for (int counter = 0, excludedCounter = 0; counter < piconet_node_count; counter++)
+                {
+                    if (piconet_nodes[counter] == node_id)
+                    {
+                        exclude_index = counter;
+                    }
+                    else
+                    {
+                        Console.WriteLine("\t{0}. {1} : {2}", excludedCounter + 1, Devices.getNameByID(piconet_nodes[counter]), piconet_nodes[counter]);
+                        excludedCounter++;
+                    }
+                }
+                Console.Write("Choose one of the above nodes: ");
+                int k;
+                try
+                {
+                    k = int.Parse(Console.ReadLine());
+                    k = k - 1;//node indexes are shown starting from 1 not 0
+                }
+                catch
+                {
+                    k = -1;
+                }
+                if (k >= 0 && k < piconet_node_count)
+                {
+                    if (k < exclude_index)
+                    {
+                        return piconet_nodes[k];
+                    }
+                    else
+                    {
+                        return piconet_nodes[k + 1];
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Selection not valid!");
+                    Console.Write("Press any key to return...");
+                    Console.ReadKey();
+                    return -1;
+                }
+            }
+            else
+            {
+                Console.WriteLine("No node exists!");
+                Console.Write("Press any key to return...");
+                Console.ReadKey();
+                return -1;
+            }
+        }
+
         //option 3
         private static void printStatus()
         {
-            Console.WriteLine("\t#\t|\tnode_name\t|\tnode_id\t|\tmaster/slave\t|\t");
+            Console.WriteLine("\t#\t|\tname\t|\tnode_id\t|\tmaster/slave\t|\t");
             int[] IDs = Devices.getNodeIDs();
             string[] names = Devices.getNodeNames();
             int nodeCount = Devices.getNodeCount();

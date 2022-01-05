@@ -165,5 +165,15 @@ namespace BluetoothSimulator.Classes
             Node sender = Devices.getNodeByID(sender_id);
             return sender.sendPacket(sender_id, reciever_id, message);
         }
+
+        public static void printSentMessages(int node_id)
+        {
+            Devices.getNodeByID(node_id).printSentMessages();
+        }
+
+        public static void printRecievedMessages(int node_id)
+        {
+            Devices.getNodeByID(node_id).printRecievedMessages();
+        }
     }
 }

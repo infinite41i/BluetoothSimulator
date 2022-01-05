@@ -101,9 +101,11 @@ namespace BluetoothSimulator.Classes
             Console.WriteLine("\tChoose one of the options below:");
             Console.WriteLine("\t 1. scan and connect");
             Console.WriteLine("\t 2. send a message");
-            Console.WriteLine("\t 3. disconnect");
-            Console.WriteLine("\t 4. see piconet status");
-            Console.WriteLine("\t 5. unselect node");
+            Console.WriteLine("\t 3. see sent messages log");
+            Console.WriteLine("\t 4. see recieved messages log");
+            Console.WriteLine("\t 5. disconnect");
+            Console.WriteLine("\t 6. see piconet status");
+            Console.WriteLine("\t 7. unselect node");
             string k = Console.ReadLine();
             switch (k)
             {
@@ -114,21 +116,34 @@ namespace BluetoothSimulator.Classes
                     sendMessageDialog();
                     break;
                 case "3":
-                    //
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Devices.printSentMessages(Devices.getSelectedNodeID());
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write("Press any key to continue...");
+                    Console.ReadKey();
                     break;
                 case "4":
-                    printPiconetStatus();
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Devices.printRecievedMessages(Devices.getSelectedNodeID());
+                    Console.ForegroundColor = ConsoleColor.White;
                     Console.Write("Press any key to continue...");
                     Console.ReadKey();
                     break;
                 case "5":
+                    //disconnect
+                    break;
+                case "6":
+                    printPiconetStatus();
+                    Console.Write("Press any key to continue...");
+                    Console.ReadKey();
+                    break;
+                case "7":
                     Devices.setSelectedNode(-1);
                     break;
             }
         }
 
         //scan
-
         private static void scan()
         {
             //print near networks (every node in the same piconet is considered near.)
@@ -217,29 +232,35 @@ namespace BluetoothSimulator.Classes
         
         private static void sendMessageDialog()
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            printPiconetStatus();
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("Select one of the above nodes: ");
+            int target_node = promptPiconetNodes();
+            if(target_node != -1)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.Write("Enter your message: ");
+                Console.ForegroundColor = ConsoleColor.White;
+                string message = Console.ReadLine();
+                int sent = sendMessage(target_node, message);
+                if(sent == 0)
+                    Console.WriteLine("Message sent!");
+                else
+                    Console.WriteLine("ERROR! Message was not sent!");
+            }
+            else
+            {
+                Console.WriteLine("Invalid choice!");
+            }
+            Console.Write("Press any key to return...");
             Console.ReadKey();
         }
 
         private static int sendMessage(int target_node, string message)
         {
-            //first choose reciever
-            int reciever_id = promptNodeInPiconet(Devices.getSelectedNodeID());
-            if(reciever_id != -1)
-            {
-                return -1;
-            }
-            else
-            {
-                return Devices.sendPacket(Devices.getSelectedNodeID(), target_node, message);
-            }
+            return Devices.sendPacket(Devices.getSelectedNodeID(), target_node, message);
         }
 
         private static void printPiconetStatus()
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             int selected_node_id = Devices.getSelectedNodeID();
             int piconet_id = Devices.getPiconetID(selected_node_id);
             Console.WriteLine("Piconet ID: {0}", piconet_id);
@@ -253,65 +274,54 @@ namespace BluetoothSimulator.Classes
                 bool node_is_master = Devices.getMasterOrSlave(node_id);
                 Console.WriteLine("\t{0}\t|\t{1}\t|\t{2}\t|\t{3}", node_index, node_name, node_id, node_is_master ? "*" : " ");
             }
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
-        private static int promptNodeInPiconet(int node_id)
+        private static int promptPiconetNodes()
         {
-            int[] piconet_nodes = Devices.getPiconetNodesByNodeID(node_id);
-            int piconet_node_count = Devices.getPiconetNodeCountByNodeID(node_id);
             int exclude_index = -1;
-
-            if(piconet_node_count > 0)
+            Console.ForegroundColor = ConsoleColor.Red;
+            int selected_node_id = Devices.getSelectedNodeID();
+            int piconet_id = Devices.getPiconetID(selected_node_id);
+            Console.WriteLine("\t#\t|\tname\t|\tnode id\t|");
+            int piconet_node_count = Devices.getPiconetNodeCountByNodeID(selected_node_id);
+            int[] piconet_nodes = Devices.getPiconetNodesByNodeID(selected_node_id);
+            for (int counter = 0, excluded_counter = 0; counter < piconet_node_count; counter++)
             {
-                //print nodes list in piconet
-                Console.WriteLine("List of available nodes in piconet:");
-                for (int counter = 0, excludedCounter = 0; counter < piconet_node_count; counter++)
+                int node_id = piconet_nodes[counter];
+                if (node_id == selected_node_id)
                 {
-                    if (piconet_nodes[counter] == node_id)
-                    {
-                        exclude_index = counter;
-                    }
-                    else
-                    {
-                        Console.WriteLine("\t{0}. {1} : {2}", excludedCounter + 1, Devices.getNameByID(piconet_nodes[counter]), piconet_nodes[counter]);
-                        excludedCounter++;
-                    }
-                }
-                Console.Write("Choose one of the above nodes: ");
-                int k;
-                try
-                {
-                    k = int.Parse(Console.ReadLine());
-                    k = k - 1;//node indexes are shown starting from 1 not 0
-                }
-                catch
-                {
-                    k = -1;
-                }
-                if (k >= 0 && k < piconet_node_count)
-                {
-                    if (k < exclude_index)
-                    {
-                        return piconet_nodes[k];
-                    }
-                    else
-                    {
-                        return piconet_nodes[k + 1];
-                    }
+                    exclude_index = counter;
                 }
                 else
                 {
-                    Console.WriteLine("Selection not valid!");
-                    Console.Write("Press any key to return...");
-                    Console.ReadKey();
-                    return -1;
+                    string node_name = Devices.getNameByID(node_id);
+                    bool node_is_master = Devices.getMasterOrSlave(node_id);
+                    Console.WriteLine("\t{0}\t|\t{1}\t|\t{2}\t|", excluded_counter, node_name, node_id);
+                    excluded_counter++;
                 }
+                
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Select one of the above nodes: ");
+            int target_candidate;
+            try
+            {
+                target_candidate = int.Parse(Console.ReadLine());
+            }
+            catch
+            {
+                target_candidate = -1;
+            }
+            if (target_candidate >= 0 && target_candidate < piconet_node_count)
+            {
+                if (target_candidate < exclude_index)
+                    return piconet_nodes[target_candidate];
+                else
+                    return piconet_nodes[target_candidate + 1];
             }
             else
             {
-                Console.WriteLine("No node exists!");
-                Console.Write("Press any key to return...");
-                Console.ReadKey();
                 return -1;
             }
         }
@@ -319,6 +329,7 @@ namespace BluetoothSimulator.Classes
         //option 3
         private static void printStatus()
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("\t#\t|\tname\t|\tnode_id\t|\tmaster/slave\t|\t");
             int[] IDs = Devices.getNodeIDs();
             string[] names = Devices.getNodeNames();
@@ -334,6 +345,7 @@ namespace BluetoothSimulator.Classes
             {
                 Console.WriteLine("\t-\t|\t----------\t|\t-------\t|\t-------------\t|\t");
             }
+            Console.ForegroundColor = ConsoleColor.White;
             Console.Write("Press any key to return...");
             Console.ReadKey();
         }

@@ -14,12 +14,14 @@ namespace BluetoothSimulator.Classes
         private int sender_id;
         private int reciever_id;
         private string message;
+        private DateTime datetime;
 
         public Packet(int sender_id, int reciever_id, string message)
         {
             this.sender_id = sender_id;
             this.reciever_id = reciever_id;
             this.message = message;
+            this.datetime = DateTime.Now;
         }
 
         public int getSenderID()
@@ -35,6 +37,11 @@ namespace BluetoothSimulator.Classes
         public string getMessage()
         {
             return message;
+        }
+
+        public string getDateTime()
+        {
+            return datetime.ToString(System.Globalization.CultureInfo.CreateSpecificCulture("en-US"));
         }
     }
 }

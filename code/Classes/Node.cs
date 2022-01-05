@@ -173,6 +173,31 @@ namespace BluetoothSimulator.Classes
 
             }
 
+            public void printSentMessages()
+            {
+                Queue<Packet> packetsCopy = new Queue<Packet>(sendLog.ToArray());
+
+                Console.WriteLine("Sent Messages:");
+                int counter = 1;
+                foreach(Packet packet in packetsCopy)
+                {
+                    Console.WriteLine("{0}: to '{1}' / time: {2} / message: '{3}'", counter, packet.getRecieverID(), packet.getDateTime(), packet.getMessage());
+                    counter++;
+                }
+            }
+
+            public void printRecievedMessages()
+            {
+                Queue<Packet> packetsCopy = new Queue<Packet>(recieveLog.ToArray());
+
+                Console.WriteLine("Recieved Messages:");
+                int counter = 1;
+                foreach (Packet packet in packetsCopy)
+                {
+                    Console.WriteLine("{0}: from '{1}' / time: {2} / message: '{3}'", counter, Devices.getNameByID(packet.getRecieverID()), packet.getDateTime(), packet.getMessage());
+                    counter++;
+                }
+            }
         }
     }
     

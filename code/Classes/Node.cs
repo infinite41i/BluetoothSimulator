@@ -194,7 +194,7 @@ namespace BluetoothSimulator.Classes
                 int counter = 1;
                 foreach (Packet packet in packetsCopy)
                 {
-                    Console.WriteLine("{0}: from '{1}' / time: {2} / message: '{3}'", counter, Devices.getNameByID(packet.getRecieverID()), packet.getDateTime(), packet.getMessage());
+                    Console.WriteLine("{0}: from '{1}' / time: {2} / message: '{3}'", counter, Devices.getNameByID(packet.getSenderID()), packet.getDateTime(), packet.getMessage());
                     counter++;
                 }
             }
